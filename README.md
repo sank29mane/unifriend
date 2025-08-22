@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Unifriend
+
+Unifriend is a modern social‑networking web application built with **Next.js 14** (App Router), **TypeScript**, and **Tailwind CSS**.
+It demonstrates a full‑stack approach using server‑side rendering, API routes, and client‑side interactivity.
+
+## Features
+
+- **User authentication** (JWT based) with protected routes.
+- **Profile management** – update avatar, bio and social links.
+- **Real‑time chat** using WebSockets (Socket.IO).
+- **Responsive UI** powered by Tailwind and Geist font.
+- **Deployment ready for Vercel** with environment variables support.
+- **Enhanced Visual Design:** Modern color palette, improved typography, and consistent alignment across pages.
+- **Testimonials Section:** Dynamic quotation marks for user reviews.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+npm install
+
+# Run locally
+npm run dev --turbopack
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+unifriend/
+├─ src/            # Application source
+│  ├─ app/         # Next.js App Router pages & layout
+│  ├─ components/  # Reusable UI components
+│  ├─ lib/         # API clients, utilities
+│  ├─ server/      # Server‑side logic (API routes)
+│  └─ app/theme.ts # Design system theme configuration
+├─ public/         # Static assets
+└─ tests/          # Unit & integration tests
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env.local` file at the root:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```dotenv
+NEXT_PUBLIC_API_URL=https://api.example.com
+JWT_SECRET=your-secret-key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Running Tests
 
-## Deploy on Vercel
+```bash
+npm run test
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contribution Guidelines
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Fork the repository and create a new branch (`feature/your-feature`).
+2. Ensure tests pass: `npm run test`.
+3. Run linting: `npm run lint`.
+4. Open a pull request with a clear description of the changes.
+
+All contributions are welcome – just follow the style guide and run tests before submitting.
+
+## License
+
+MIT © 2025 Unifriend

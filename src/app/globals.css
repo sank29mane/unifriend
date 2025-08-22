@@ -1,26 +1,49 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-primary: #FFD700;
+  --color-primary-dark: #E6C200;
+  --color-secondary: #003D7A;
+  --color-background: #FEFEFE;
+  --color-text: #003D7A;
+  
+  --font-family-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-family-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Ensure proper font fallbacks and base styles */
+@layer base {
+  html {
+    font-family: var(--font-family-sans);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Testimonial quote styling */
+.testimonial-text {
+  /* Tell the browser which characters to use for open/close quotes */
+  quotes: """ """;
+}
+
+/* Insert the quotes before & after the blockquote content */
+.testimonial-text::before,
+.testimonial-text::after {
+  /* Bigger, brand‑colored quote marks */
+  font-size: 3rem;          /* adjust as needed */
+  color: var(--color-primary);    /* pulls from theme.ts */
+}
+
+/* The actual quote characters */
+.testimonial-text::before {
+  content: open-quote;
+}
+.testimonial-text::after {
+  content: close-quote;
+}
+
+/* Optional – position the quotes a bit away from the text */
+.testimonial-text::before {
+  margin-right: 0.5rem;
+}
+.testimonial-text::after {
+  margin-left: 0.5rem;
 }

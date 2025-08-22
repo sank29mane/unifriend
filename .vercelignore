@@ -1,0 +1,11 @@
+# Ignore development and build artifacts during Vercel uploads
+node_modules
+.next
+out
+build
+coverage
+.vercel
+.env*
+**/*.log
+*.tsbuildinfo
+

@@ -1,22 +1,35 @@
-import { Metadata } from 'next';
-import { getTokenFromRequest, verifyToken } from '@/server/auth';
+// src/app/dashboard/page.tsx
+'use client';
+import { useEffect, useState } from 'react';
 
-export const metadata: Metadata = {
-  title: 'Dashboard – Unifriend',
-};
+export default function Dashboard() {
+  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
 
-export default async function DashboardPage({ request }: { request: Request }) {
-  const token = getTokenFromRequest(request as any);
-  if (!token || !verifyToken(token)) {
-    // Redirect to login when unauthenticated
-    return <div>Please log in to access your dashboard.</div>;
-  }
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user) setUser(data.user);
+      });
+  }, []);
 
-  // In a real app, fetch protected data here.
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/auth/login';
+  };
+
+  if (!user) return <p>Loading...</p>;
+
   return (
-    <section className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-4">Welcome to your Dashboard</h1>
-      <p>You are authenticated. Replace this with real content.</p>
-    </section>
+    <div className="container mx-auto py-8">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <p>Welcome, {user.email}</p>
+      <button
+        onClick={handleLogout}
+        className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
+      >
+        Sign out
+      </button>
+    </div>
   );
 }

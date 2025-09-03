@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-text`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-text flex flex-col min-h-screen`}
       >
         <header className="bg-white shadow-md">
           <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -40,15 +40,15 @@ export default function RootLayout({
                 Login
               </a>
               <a
-                href="/auth/register"
+                href="/auth/register?role=student"
                 className="px-4 py-2 rounded bg-secondary text-white hover:bg-secondary/90 transition font-medium"
               >
-                Register
+                Sign up
               </a>
             </div>
           </nav>
         </header>
-        <main className="container mx-auto px-6 py-8">{children}</main>
+        <main className="container mx-auto px-6 py-8 flex-grow">{children}</main>
         <footer className="bg-gray-100 py-6 text-center text-gray-500">
           <p>&copy; {new Date().getFullYear()} Unifriend. All rights reserved.</p>
         </footer>

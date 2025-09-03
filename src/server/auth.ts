@@ -1,10 +1,6 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required');
-}
 const TOKEN_COOKIE_NAME = 'auth_token';
 
 export interface UserPayload extends JwtPayload {
@@ -16,15 +12,24 @@ export interface UserPayload extends JwtPayload {
  * Generate a signed JWT for the given user.
  */
 export function signToken(user: { id: string; email: string }): string {
-  return jwt.sign(user, JWT_SECRET, { expiresIn: '1h' });
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is not set');
+  }
+  return jwt.sign(user, secret, { expiresIn: '1h' });
 }
 
 /**
  * Verify a token. Returns the decoded payload or null if invalid.
  */
 export function verifyToken(token: string): UserPayload | null {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error('JWT_SECRET environment variable is not set');
+    return null;
+  }
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as UserPayload;
+    const decoded = jwt.verify(token, secret) as UserPayload;
     return decoded;
   } catch {
     return null;

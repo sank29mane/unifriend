@@ -1,2 +1,0 @@
-{\n  "files": {\n    "excludes": ["node_modules", ".next", "dist"]\n  },\n  "linter": {\n    "rules": {\n      \"recommended\": true,\n      \"noUnusedVariables\": {\n        "severity": "error"
-      }\n    }\n  },\n  "formatter": {\n    "indentSize": 2,\n    "lineWidth": 120\n  }\n}

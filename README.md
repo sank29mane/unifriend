@@ -8,7 +8,10 @@ server‑side rendering, API routes and client‑side interactivity.
 
 ## Features
 
-- **User authentication** (JWT based) with protected routes.
+- **Robust User Authentication:** Implemented JWT-based authentication with secure password hashing (bcryptjs), protected routes, and HTTP-only cookies.
+- **Database Layer with Prisma:** Integrated Prisma ORM with a SQLite database for local development, including a `User` model.
+- **User Roles:** Supports distinct 'Student' and 'Helper' user roles, managed during registration.
+- **Global Error Handling:** Centralized error management with `app/error.tsx` for a better user experience.
 - **Profile management** – update avatar, bio and social links.
 - **Real‑time chat** using WebSockets (Socket.IO).
 - **Responsive UI** powered by Tailwind and Geist font.
@@ -77,13 +80,15 @@ Vercel will automatically detect `next.config.ts` and use the embedded **Turbopa
 
 ## Running Tests
 
-The repo currently contains no automated tests – the section is kept for future expansion. When you add your first test, simply run:
+Automated tests are implemented using Jest, configured to handle both Node.js modules and React components.
+
+To run the test suite, simply execute:
 
 ```bash
 npm run test
 ```
 
-Make sure you have a `tsconfig.json` that includes the test files or configure your testing framework accordingly.
+The suite includes a unit test for `auth.ts` covering JWT signing and verification, as well as a component test for `TestimonialsSection.tsx`.
 
 ## Contribution Guidelines
 
@@ -98,3 +103,11 @@ We appreciate clear titles, detailed descriptions, and screenshots if applicable
 ## License
 
 This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+
+## TODO
+
+- Implement profile management features (update avatar, bio, social links).
+- Implement real-time chat using WebSockets (Socket.IO).
+- Expand test coverage for all features.
+- Implement role-based authorization for specific routes or features.
+- Integrate with a production-ready database (e.g., Vercel Postgres, Neon) for deployment.

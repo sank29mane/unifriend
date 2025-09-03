@@ -1,27 +1,64 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState, type ChangeEvent, type FormEvent, Suspense } from "react";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const role = searchParams.get("role") || "student"; // default
 
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState<string | null>(null);
+  const [passwordsMatchError, setPasswordsMatchError] = useState(false);
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
+    // Reset password match error when user types
+    if (e.target.name === 'password' || e.target.name === 'confirmPassword') {
+      setPasswordsMatchError(false);
+    }
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.email || !form.password) {
+    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
       setError("Please fill in all fields.");
       return;
     }
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      setPasswordsMatchError(true); // Set error state for styling
+      return;
+    }
     setError(null);
-    alert(`Registering ${form.name} as ${role} (mock only)`);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, role: role.toUpperCase() }),
+      });
+
+      if (res.ok) {
+        const loginRes = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: form.email, password: form.password }),
+        });
+
+        if (loginRes.ok) {
+          router.push("/dashboard");
+        } else {
+          router.push("/auth/login");
+        }
+      } else {
+        const data = await res.json();
+        setError(data.error || "Something went wrong");
+      }
+    } catch (error) {
+      setError("An unexpected error occurred");
+    }
   }
 
   return (
@@ -72,7 +109,7 @@ function RegisterForm() {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
             Password
           </label>
@@ -83,7 +120,23 @@ function RegisterForm() {
             placeholder="••••••••"
             value={form.password}
             onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
+            className={`w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary ${passwordsMatchError ? 'border-red-500' : ''}`}
+            required
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            placeholder="••••••••"
+            value={form.confirmPassword} 
+            onChange={handleChange}
+            className={`w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary ${passwordsMatchError ? 'border-red-500' : ''}`}
             required
           />
         </div>
@@ -94,6 +147,15 @@ function RegisterForm() {
         >
           Sign Up
         </button>
+
+        {role === 'student' && (
+          <p className="mt-4 text-sm text-center text-gray-600">
+            Are you a helper?{" "}
+            <a href="/auth/register?role=helper" className="text-primary hover:underline">
+              Sign up as Helper
+            </a>
+          </p>
+        )}
 
         <p className="mt-6 text-sm text-center text-gray-600">
           Already have an account?{" "}

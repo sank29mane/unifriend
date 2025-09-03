@@ -1,7 +1,6 @@
 // src/server/api/auth/login.ts
 import { NextResponse } from 'next/server';
-import type { RequestInitWithAuth, JwtPayload } from '../../../types';
-import { signToken, setTokenCookie, verifyToken, getTokenFromRequest } from '@/server/auth';
+import { signToken, setTokenCookie } from '@/server/auth';
 
 /**
  * Simple login endpoint that accepts any email/password and returns a JWT.

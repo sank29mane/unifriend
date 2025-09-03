@@ -1,4 +1,4 @@
-import TestimonialsSection from "@/components/TestimonialsSection";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
 
 export default function Home() {
   return (

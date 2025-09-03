@@ -9,6 +9,7 @@
     "lint": "biome check",
     "format": "biome format --write"
   },
+  "license": "MIT",
   "dependencies": {
     "next": "15.5.0",
     "react": "19.1.0",
@@ -16,7 +17,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
-    "@tailwindcss/postcss": "^4.1.12",
+    "@tailwindcss/postcss": "^4.112",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

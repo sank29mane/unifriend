@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { signToken, setTokenCookie } from '../../../server/auth';
+import { signToken, setTokenCookie } from '../../../../server/auth';
 
 // In a real application this would be replaced with database lookup
 const mockUser = {

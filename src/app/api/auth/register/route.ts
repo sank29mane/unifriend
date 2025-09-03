@@ -2,23 +2,21 @@ import { NextResponse } from 'next/server';
 import { signToken, setTokenCookie } from '@/server/auth';
 
 /**
- * Simple login endpoint.
- * Expects JSON body: { email, password }
- * In a real project you would validate credentials against a database.
+ * Very basic register endpoint.
+ * In a real app you would persist users and hash passwords.
  */
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, password } = body;
 
-    // Very naive validation – replace with real auth logic.
     if (!email || !password) {
       return NextResponse.json({ error: 'Missing credentials' }, { status: 400 });
     }
 
-    // TODO: verify email/password against your user store
-    const token = signToken({ id: 'user-id', email });
+    // TODO: create user in DB and hash password
 
+    const token = signToken({ id: 'new-user-id', email });
     const response = NextResponse.json({ ok: true, token });
     setTokenCookie(response, token);
     return response;

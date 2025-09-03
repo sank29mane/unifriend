@@ -16,11 +16,15 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      Role     @default(STUDENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  password    String
+  role        Role     @default(STUDENT)
+  // Profile fields
+  profilePhoto String?
+  bio          String?
+  socialLinks  Json?    // Will store {linkedin: '', github: '', twitter: '', website: ''}
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

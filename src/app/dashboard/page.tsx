@@ -2,34 +2,56 @@
 'use client';
 import { useEffect, useState } from 'react';
 
+interface User {
+  id: string;
+  email: string;
+  role: 'STUDENT' | 'HELPER';
+}
+
 export default function Dashboard() {
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/auth/me')
+    fetch('/api/profile')
       .then((res) => res.json())
       .then((data) => {
-        if (data.user) setUser(data.user);
+        if (data.user) {
+          const userData = data.user as User;
+          setUser(userData);
+          
+          // Redirect to role-specific dashboard
+          if (userData.role === 'STUDENT') {
+            window.location.href = '/dashboard/student';
+          } else if (userData.role === 'HELPER') {
+            window.location.href = '/dashboard/helper';
+          }
+        } else {
+          window.location.href = '/auth/login';
+        }
+      })
+      .catch(() => {
+        window.location.href = '/auth/login';
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.href = '/auth/login';
-  };
-
-  if (!user) return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p>Welcome, {user.email}</p>
-      <button
-        onClick={handleLogout}
-        className="mt-4 px-4 py-2 bg-red-600 text-white rounded"
-      >
-        Sign out
-      </button>
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-600">Redirecting...</p>
     </div>
   );
 }

@@ -12,13 +12,20 @@ import {
   Github,
   Twitter,
   Globe,
-  User
+  User,
+  Shield,
+  Bell,
+  Search
 } from 'lucide-react';
 import ProfileEditor from '../../components/ProfileEditor';
+import AccountSettings from '../../components/AccountSettings';
+import StudentVerification from '../../components/StudentVerification';
 
 interface UserProfile {
   id: string;
   email: string;
+  firstName?: string | null;
+  lastName?: string | null;
   name?: string | null;
   role: 'STUDENT' | 'HELPER';
   profilePhoto?: string | null;
@@ -29,12 +36,20 @@ interface UserProfile {
     twitter?: string;
     website?: string;
   };
+  university?: string | null;
+  country?: string | null;
+  studentStatus?: string | null;
+  verificationMethod?: string | null;
+  universityEmail?: string | null;
+  isUniversityEmailVerified?: boolean | null;
   createdAt?: string;
 }
 
 export default function StudentDashboard() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isProfileEditorOpen, setIsProfileEditorOpen] = useState(false);
+  const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
+  const [isVerificationOpen, setIsVerificationOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -71,6 +86,22 @@ export default function StudentDashboard() {
     setUser(updatedUser);
   };
 
+  const handleAccountDeleted = () => {
+    window.location.href = '/auth/login';
+  };
+
+  const handleAccountTypeChanged = (updatedUser: UserProfile) => {
+    setUser(updatedUser);
+    // Redirect to appropriate dashboard based on new role
+    if (updatedUser.role === 'HELPER') {
+      window.location.href = '/dashboard/helper';
+    }
+  };
+
+  const handleVerificationUpdated = (updatedUser: UserProfile) => {
+    setUser(updatedUser);
+  };
+
   const getSocialIcon = (platform: string) => {
     switch (platform) {
       case 'linkedin': return <Linkedin className="w-5 h-5" />;
@@ -103,24 +134,60 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-gray-900">Student Dashboard</h1>
+          <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Welcome back, {user.firstName || 'Student'}!</h1>
+                <p className="text-blue-100 text-sm">Ready to learn something new today?</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              {/* Search */}
+              <button className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors">
+                <Search className="w-5 h-5" />
+              </button>
+              
+              {/* Notifications */}
+              <button className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors relative">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              </button>
+              
+              {/* Verification Status */}
               <button
-                onClick={() => setIsProfileEditorOpen(true)}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
+                onClick={() => setIsVerificationOpen(true)}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                  user.studentStatus === 'VERIFIED' 
+                    ? 'bg-green-500 bg-opacity-20 text-green-100 hover:bg-opacity-30'
+                    : 'bg-yellow-500 bg-opacity-20 text-yellow-100 hover:bg-opacity-30'
+                }`}
+              >
+                <Shield className="w-4 h-4" />
+                <span className="hidden sm:block text-sm">
+                  {user.studentStatus === 'VERIFIED' ? 'Verified' : 'Verify Student'}
+                </span>
+              </button>
+              
+              {/* Settings */}
+              <button
+                onClick={() => setIsAccountSettingsOpen(true)}
+                className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
               >
                 <Settings className="w-5 h-5" />
-                <span className="hidden sm:block">Settings</span>
               </button>
+              
+              {/* Logout */}
               <button
                 onClick={handleLogout}
-                className="flex items-center space-x-2 px-3 py-2 text-red-600 hover:text-red-800 transition-colors"
+                className="p-2 text-white hover:bg-red-500 hover:bg-opacity-20 rounded-lg transition-colors"
               >
                 <LogOut className="w-5 h-5" />
-                <span className="hidden sm:block">Logout</span>
               </button>
             </div>
           </div>
@@ -148,7 +215,10 @@ export default function StudentDashboard() {
                 </div>
                 
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {user.name || 'Anonymous Student'}
+                  {user.firstName && user.lastName 
+                    ? `${user.firstName} ${user.lastName}` 
+                    : user.name || 'Anonymous Student'
+                  }
                 </h2>
                 <p className="text-gray-600">{user.email}</p>
                 <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
@@ -265,6 +335,23 @@ export default function StudentDashboard() {
         isOpen={isProfileEditorOpen}
         onClose={() => setIsProfileEditorOpen(false)}
         onSave={handleProfileSave}
+      />
+
+      {/* Account Settings Modal */}
+      <AccountSettings
+        user={user}
+        isOpen={isAccountSettingsOpen}
+        onClose={() => setIsAccountSettingsOpen(false)}
+        onAccountDeleted={handleAccountDeleted}
+        onAccountTypeChanged={handleAccountTypeChanged}
+      />
+
+      {/* Student Verification Modal */}
+      <StudentVerification
+        user={user}
+        isOpen={isVerificationOpen}
+        onClose={() => setIsVerificationOpen(false)}
+        onVerificationUpdated={handleVerificationUpdated}
       />
     </div>
   );

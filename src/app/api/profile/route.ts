@@ -27,11 +27,19 @@ export async function GET() {
       select: {
         id: true,
         email: true,
+        firstName: true,
+        lastName: true,
         name: true,
         role: true,
         profilePhoto: true,
         bio: true,
         socialLinks: true,
+        university: true,
+        country: true,
+        studentStatus: true,
+        verificationMethod: true,
+        universityEmail: true,
+        isUniversityEmailVerified: true,
         createdAt: true,
       },
     });
@@ -64,7 +72,7 @@ export async function PUT(request: Request) {
       userId: string;
     };
 
-    const { name, bio, socialLinks, profilePhoto } = await request.json();
+    const { firstName, lastName, bio, socialLinks, profilePhoto, university, country } = await request.json();
 
     // Validate social links format if provided
     if (socialLinks) {
@@ -80,22 +88,37 @@ export async function PUT(request: Request) {
       }
     }
 
+    // Update computed name if firstName or lastName changed
+    const computedName = (firstName && lastName) ? `${firstName} ${lastName}` : undefined;
+
     const updatedUser = await prisma.user.update({
       where: { id: decoded.userId },
       data: {
-        ...(name !== undefined && { name }),
+        ...(firstName !== undefined && { firstName }),
+        ...(lastName !== undefined && { lastName }),
+        ...(computedName && { name: computedName }),
         ...(bio !== undefined && { bio }),
         ...(socialLinks !== undefined && { socialLinks }),
         ...(profilePhoto !== undefined && { profilePhoto }),
+        ...(university !== undefined && { university }),
+        ...(country !== undefined && { country }),
       },
       select: {
         id: true,
         email: true,
+        firstName: true,
+        lastName: true,
         name: true,
         role: true,
         profilePhoto: true,
         bio: true,
         socialLinks: true,
+        university: true,
+        country: true,
+        studentStatus: true,
+        verificationMethod: true,
+        universityEmail: true,
+        isUniversityEmailVerified: true,
         updatedAt: true,
       },
     });

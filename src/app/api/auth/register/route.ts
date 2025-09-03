@@ -6,11 +6,11 @@ const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
-    const { email, name, password, role } = await request.json();
+    const { email, firstName, lastName, password, role } = await request.json();
 
-    if (!email || !password) {
+    if (!email || !password || !firstName || !lastName) {
       return NextResponse.json(
-        { error: "Email and password are required" },
+        { error: "Email, password, first name, and last name are required" },
         { status: 400 }
       );
     }
@@ -19,12 +19,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid role" }, { status: 400 });
     }
 
+    // Check if email already exists (this ensures one email = one account)
+    const existingUser = await prisma.user.findUnique({
+      where: { email }
+    });
+
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "An account with this email already exists" },
+        { status: 409 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+    const fullName = `${firstName} ${lastName}`;
 
     const user = await prisma.user.create({
       data: {
         email,
-        name,
+        firstName,
+        lastName,
+        name: fullName, // For backward compatibility
         password: hashedPassword,
         role: role || Role.STUDENT,
       },

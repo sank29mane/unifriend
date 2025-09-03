@@ -15,16 +15,37 @@ enum Role {
   HELPER
 }
 
+enum StudentStatus {
+  UNVERIFIED
+  PENDING
+  VERIFIED
+}
+
+enum VerificationMethod {
+  UNIVERSITY_EMAIL
+  DOCUMENT_UPLOAD
+}
+
 model User {
   id          String   @id @default(cuid())
   email       String   @unique
-  name        String?
+  firstName   String?
+  lastName    String?
+  name        String?  // Keep for backward compatibility, will be computed from firstName + lastName
   password    String
   role        Role     @default(STUDENT)
   // Profile fields
   profilePhoto String?
   bio          String?
   socialLinks  Json?    // Will store {linkedin: '', github: '', twitter: '', website: ''}
+  university   String?
+  country      String?
+  // Student verification fields
+  studentStatus         StudentStatus?        @default(UNVERIFIED)
+  verificationMethod    VerificationMethod?
+  verificationDocument  String?              // File path or base64 for verification documents
+  universityEmail       String?              // University email for verification
+  isUniversityEmailVerified Boolean?         @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

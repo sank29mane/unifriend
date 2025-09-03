@@ -18,10 +18,13 @@ import {
   DollarSign
 } from 'lucide-react';
 import ProfileEditor from '../../components/ProfileEditor';
+import AccountSettings from '../../components/AccountSettings';
 
 interface UserProfile {
   id: string;
   email: string;
+  firstName?: string | null;
+  lastName?: string | null;
   name?: string | null;
   role: 'STUDENT' | 'HELPER';
   profilePhoto?: string | null;
@@ -32,12 +35,15 @@ interface UserProfile {
     twitter?: string;
     website?: string;
   };
+  university?: string | null;
+  country?: string | null;
   createdAt?: string;
 }
 
 export default function HelperDashboard() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isProfileEditorOpen, setIsProfileEditorOpen] = useState(false);
+  const [isAccountSettingsOpen, setIsAccountSettingsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -72,6 +78,18 @@ export default function HelperDashboard() {
 
   const handleProfileSave = (updatedUser: UserProfile) => {
     setUser(updatedUser);
+  };
+
+  const handleAccountDeleted = () => {
+    window.location.href = '/auth/login';
+  };
+
+  const handleAccountTypeChanged = (updatedUser: UserProfile) => {
+    setUser(updatedUser);
+    // Redirect to student dashboard if changed to student
+    if (updatedUser.role === 'STUDENT') {
+      window.location.href = '/dashboard/student';
+    }
   };
 
   const getSocialIcon = (platform: string) => {
@@ -112,7 +130,7 @@ export default function HelperDashboard() {
             <h1 className="text-2xl font-bold text-gray-900">Helper Dashboard</h1>
             <div className="flex items-center space-x-4">
               <button
-                onClick={() => setIsProfileEditorOpen(true)}
+                onClick={() => setIsAccountSettingsOpen(true)}
                 className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 transition-colors"
               >
                 <Settings className="w-5 h-5" />
@@ -151,7 +169,10 @@ export default function HelperDashboard() {
                 </div>
                 
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {user.name || 'Anonymous Helper'}
+                  {user.firstName && user.lastName 
+                    ? `${user.firstName} ${user.lastName}` 
+                    : user.name || 'Anonymous Helper'
+                  }
                 </h2>
                 <p className="text-gray-600">{user.email}</p>
                 <span className="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full mt-2">
@@ -300,6 +321,15 @@ export default function HelperDashboard() {
         isOpen={isProfileEditorOpen}
         onClose={() => setIsProfileEditorOpen(false)}
         onSave={handleProfileSave}
+      />
+
+      {/* Account Settings Modal */}
+      <AccountSettings
+        user={user}
+        isOpen={isAccountSettingsOpen}
+        onClose={() => setIsAccountSettingsOpen(false)}
+        onAccountDeleted={handleAccountDeleted}
+        onAccountTypeChanged={handleAccountTypeChanged}
       />
     </div>
   );

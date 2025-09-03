@@ -8,7 +8,7 @@ function RegisterForm() {
   const router = useRouter();
   const role = searchParams.get("role") || "student"; // default
 
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
   const [error, setError] = useState<string | null>(null);
   const [passwordsMatchError, setPasswordsMatchError] = useState(false);
 
@@ -22,7 +22,7 @@ function RegisterForm() {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
+    if (!form.firstName || !form.lastName || !form.email || !form.password || !form.confirmPassword) {
       setError("Please fill in all fields.");
       return;
     }
@@ -37,7 +37,7 @@ function RegisterForm() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, role: role.toUpperCase() }),
+        body: JSON.stringify({ firstName: form.firstName, lastName: form.lastName, email: form.email, password: form.password, role: role.toUpperCase() }),
       });
 
       if (res.ok) {
@@ -77,20 +77,37 @@ function RegisterForm() {
           </div>
         )}
 
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-            Full Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            placeholder="John Doe"
-            value={form.name}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
-            required
-          />
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="firstName">
+              First Name
+            </label>
+            <input
+              type="text"
+              name="firstName"
+              id="firstName"
+              placeholder="John"
+              value={form.firstName}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="lastName">
+              Last Name
+            </label>
+            <input
+              type="text"
+              name="lastName"
+              id="lastName"
+              placeholder="Doe"
+              value={form.lastName}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary"
+              required
+            />
+          </div>
         </div>
 
         <div className="mb-4">

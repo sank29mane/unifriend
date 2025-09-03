@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       expiresIn: "1h",
     });
 
-    cookies().set("token", token, {
+    (await cookies()).set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
